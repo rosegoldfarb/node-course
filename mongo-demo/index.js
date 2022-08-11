@@ -6,9 +6,9 @@ mongoose.connect('mongodb://localhost/playground')
 
 //defines shape of data
 const courseSchema = new mongoose.Schema({
-    name: { type: String, 
+    name: { type: String,
         required: true,
-    maxlength: 255},
+        maxlength: 255},
     category:{
         type: String,
         required: true,
@@ -17,14 +17,24 @@ const courseSchema = new mongoose.Schema({
         trim: true,
     },
     author: String,
-    // tags: [ String ],  --one way of doing this without validator
+    // tags: [ String ],  --one way of doing this without custom validator - would accept empty array tho
     tags: {
         type: Array,
         // see async video - didn't work since callback wasn't defined
         validate: {
-            validator: ((v) => {
-                return v && v.length > 0;
-            }),
+            // bellow doesn't really work because callback is not a function - do I need callback function
+            // that just returns the value passed? see note at bottom about callbacks
+            // isAsync: true,
+            // validator: function (v, callback) {
+            //     setTimeout(() => {
+            //     // some async work is done
+            //     const result = v && v.length > 0;
+            //     callback(result);
+            //     }, 3000);
+            // },
+            validator: (v) => {
+                return v && v.length > 0
+            },
             message: 'A course should have at least one tag'
         }
     },
@@ -32,12 +42,13 @@ const courseSchema = new mongoose.Schema({
     isPublished: Boolean,
     price: {
         type: Number,
+        // can't use arrow function since arrow function doesn't have "this"
         required: function() { return this.isPublished; },
         min: 10,
         max: 200,
         //get will round a value if it has been added before the setter was added
-        get = v => Math.round(v),
-        set = v => Math.round(v),
+        get : v => Math.round(v),
+        set : v => Math.round(v),
     }
 });
 
@@ -50,9 +61,10 @@ async function createCourse() {
     const course = new Course({
         name: 'some course',
         author: 'Rose',
-        tags: [],
+        tags: ['test'],
         isPublished: true,
         category: 'WEB',
+        price: 30,
     });
 
     try { 
@@ -120,3 +132,4 @@ function test (message, callback = (message) => {
 }
 
 createCourse();
+// removeCourse('62efcdf80a8c31c61875c882');

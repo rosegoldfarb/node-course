@@ -7,14 +7,13 @@ router.get('/', async (req, res) => {
     res.send(customers);
 });
 
-router.get('/:id', async (req, res) =>{
+router.get('/:id', async (req, res) => {
     try {
         const customer  = await Customer.findById(req.params.id);
         res.send(customer);
     } catch(ex) {
         return res.status(404).send('The customer with the given ID was not found');
     }
-    
 });
 
 router.post('/', async (req, res) => {

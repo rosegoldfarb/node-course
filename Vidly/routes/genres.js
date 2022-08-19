@@ -58,13 +58,6 @@ router.put('/:id', async (req, res) => {
     } catch(ex) {
         return res.status(404).send('The genre with the given ID was not found');
     }
-    
-
-    // return if it doesn't exist
-    // if (!genre) return res.status(404).send('The genre with the given ID was not found');
-
-    
-
 });
 
 router.delete('/:id', async (req, res)  => {
